@@ -1,6 +1,14 @@
 import requests 
 from bs4 import BeautifulSoup
 
+def write_txt(list):
+	file = open("playlist.txt", "w")
+	for song in list:
+    		line = "=HYPERLINK(https://youtube.com" + song.get('href') + "; " + song.text + " ) \n"
+    		file.write(line)
+    		#file.write("=HYPERLINK(https://youtube.com"+ song.get('href') + "; " + ")\n")
+	file.close()
+
 def find_playlist_info(url):	 
 	
 	#open with GET method 
@@ -13,29 +21,16 @@ def find_playlist_info(url):
 		# we need a parser,Python built-in HTML parser is enough . 
 		soup=BeautifulSoup(resp.text,'html.parser')
 
-		# title of the playlist
-		# print(soup.title.text)
-
 		songs = list()
 		for song in soup.find_all("a", "pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link"):
         		songs.append(song)
 
-		print(songs)
+		#print(songs)
 
 		return songs
-		# SONG LINKS 
-		#songLinks = list()
-		#i = 1
-		#for link in soup.findAll('a'):
-		#	if (link.get('href').find("t=0s") != -1) :
-        	#		i += 1
-        	#		if i % 2 == 1 :
-        	#			songLinks.append("youtube.com" + link.get('href')) #print("youtube.com" + link.get('href'))
-
 
 	else: 
-		print("Error") 
+		print("Error. Can't open the web page") 
 
-playlist_url = input("Enter the url of the youtube playlist :")	
-find_playlist_info(playlist_url)
-
+playlist_url = input("Enter the url of the youtube playlist: ")
+write_txt(find_playlist_info(playlist_url))
