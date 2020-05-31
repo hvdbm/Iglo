@@ -1,12 +1,11 @@
 import requests 
 from bs4 import BeautifulSoup
 
-def write_txt(list):
+def write_txt(songs):
 	file = open("playlist.txt", "w")
-	for song in list:
-    		line = "=HYPERLINK(https://youtube.com" + song.get('href') + "; " + song.text + " ) \n"
+	for song in songs:
+    		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + song.text[7:-6] + '") \n'
     		file.write(line)
-    		#file.write("=HYPERLINK(https://youtube.com"+ song.get('href') + "; " + ")\n")
 	file.close()
 
 def find_playlist_info(url):	 
