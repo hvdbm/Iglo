@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 def write_txt(songs):
 	file = open("playlist.txt", "w")
 	for song in songs:
-    		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + song.text[7:-6] + '") \n'
+    		songName = song.text[7:-5].replace('"', '')		# must supress any " for Google Sheets
+    		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + songName + '") \n'
     		file.write(line)
 	file.close()
 
