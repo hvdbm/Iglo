@@ -6,31 +6,7 @@ class Playlist:
         self.songs = songs
         self.contributors = contributors
 
-#def write_txt_default
-#def write_txt_sheets
-
 #def find_playlist_name
-
-def find_playlist_contributors(soup):
-    contributors = list()
-    for contributor in soup.find_all("a"):
-        	if contributor.get('aria-label') != None : contributors.append(contributor.get('aria-label')[0:-7])
-    return contributors
-
-def find_playlist_songs(soup):
-	songs = list()
-	for song in soup.find_all("a", "pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link"):
-        	songs.append(song)
-	return songs
-
-def write_txt(playlist):
-	file = open("playlist.txt", "w")
-	for song in playlist.songs:
-    		songName = song.text[7:-5].replace('"', '')		# must supress any " for Google Sheets
-    		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + songName + '") \n'
-    		file.write(line)
-	file.close()
-	print("playlist.txt has been generated \n")
 
 def find_playlist_info(url, playlist):	 
 	#open with GET method 
@@ -48,6 +24,38 @@ def find_playlist_info(url, playlist):
 
 	else: 
 		print("Error. Can't open the web page") 
+
+
+def find_playlist_contributors(soup):
+    contributors = list()
+    for contributor in soup.find_all("a"):
+        	if contributor.get('aria-label') != None : contributors.append(contributor.get('aria-label')[0:-7])
+    return contributors
+
+def find_playlist_songs(soup):
+	songs = list()
+	for song in soup.find_all("a", "pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link"):
+        	songs.append(song)
+	return songs
+
+def write_txt(playlist):
+    file = open("playlist.txt", "w")
+    i = 0
+    while i < len(playlist.contributors):
+		    line = playlist.songs[i].text[7:-5] + ' ajouté par ' + playlist.contributors[i] + '\n'
+		    i += 1
+		    file.write(line)
+    file.close()
+    print("playlist.txt has been generated \n")
+
+def write_txt_sheets(playlist):
+	file = open("playlist.txt", "w")
+	for song in playlist.songs:
+    		songName = song.text[7:-5].replace('"', '')		# must supress any " for Google Sheets
+    		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + songName + '") \n'
+    		file.write(line)
+	file.close()
+	print("playlist.txt has been generated \n")
 
 playlist = Playlist(list(), list())
 playlistUrl = input("Enter the url of the youtube playlist: ")
