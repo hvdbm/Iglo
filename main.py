@@ -6,8 +6,6 @@ class Playlist:
         self.songs = songs
         self.contributors = contributors
 
-#def find_playlist_name
-
 def find_playlist_info(url, playlist):	 
 	#open with GET method 
 	resp=requests.get(url) 
@@ -57,8 +55,14 @@ def write_txt_sheets(playlist):
 	file.close()
 	print("playlist.txt has been generated \n")
 
+def choose_option(playlist):
+        print("What format do you want to use ? \n 1- Default \n 2- Google Sheets")
+        option = input("Choose a writing option: ")
+        if option == '1': write_txt(playlist)
+        elif option == '2': write_txt_sheets(playlist)
+
 playlist = Playlist(list(), list())
 playlistUrl = input("Enter the url of the youtube playlist: ")
 
 find_playlist_info(playlistUrl, playlist)
-write_txt(playlist)
+choose_option(playlist)
