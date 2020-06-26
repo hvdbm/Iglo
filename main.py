@@ -1,16 +1,38 @@
 import requests 
 from bs4 import BeautifulSoup
 
-def write_txt(songs):
+class Playlist:
+    def __init__(self, songs, contributors):
+        self.songs = songs
+        self.contributors = contributors
+
+#def write_txt_default
+#def write_txt_sheets
+
+#def find_playlist_name
+
+def find_playlist_contributors(soup):
+    contributors = list()
+    for contributor in soup.find_all("a"):
+        	if contributor.get('aria-label') != None : contributors.append(contributor.get('aria-label')[0:-7])
+    return contributors
+
+def find_playlist_songs(soup):
+	songs = list()
+	for song in soup.find_all("a", "pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link"):
+        	songs.append(song)
+	return songs
+
+def write_txt(playlist):
 	file = open("playlist.txt", "w")
-	for song in songs:
+	for song in playlist.songs:
     		songName = song.text[7:-5].replace('"', '')		# must supress any " for Google Sheets
     		line = '=HYPERLINK("https://youtube.com' + song.get('href') + '"; "' + songName + '") \n'
     		file.write(line)
 	file.close()
 	print("playlist.txt has been generated \n")
 
-def find_playlist_info(url):	 
+def find_playlist_info(url, playlist):	 
 	#open with GET method 
 	resp=requests.get(url) 
 	
@@ -21,18 +43,14 @@ def find_playlist_info(url):
 		# we need a parser,Python built-in HTML parser is enough . 
 		soup=BeautifulSoup(resp.text,'html.parser')
 
-		songs = list()
-		for song in soup.find_all("a", "pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link"):
-        		songs.append(song)
-		
-		#contributors = list()
-		#for contributor in soup.find_all("a"):
-        		#if contributor.get('aria-label') != None : contributors.append(contributor.get('aria-label')[0:-7])
-		#print(contributors)
-		return songs
+		playlist.songs = find_playlist_songs(soup)
+		playlist.contributors = find_playlist_contributors(soup)
 
 	else: 
 		print("Error. Can't open the web page") 
 
+playlist = Playlist(list(), list())
 playlistUrl = input("Enter the url of the youtube playlist: ")
-write_txt(find_playlist_info(playlistUrl))
+
+find_playlist_info(playlistUrl, playlist)
+write_txt(playlist)
